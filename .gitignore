@@ -1,0 +1,14 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+.DS_Store?
+ehthumbs.db
+
+# Temp and log files
+*.tmp
+*.log
+gfme-dl-*
+gfme-export-*
+
+# Scratch test files
+/scratch/
