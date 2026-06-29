@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Main plugin class. Orchestrates bootstrap, initialization, and dependency checks.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Plugin {
 

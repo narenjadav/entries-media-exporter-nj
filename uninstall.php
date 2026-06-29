@@ -1,8 +1,8 @@
 <?php
 /**
- * GF Media Exporter Uninstall
+ * Entries & Media Exporter by Naren Jadav Uninstall
  *
- * @package GFME
+ * @package EMENJ
  */
 
 // If uninstall not called from WordPress, exit.

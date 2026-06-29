@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles dependency verification for the plugin.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Dependencies {
 
@@ -24,19 +24,19 @@ class Dependencies {
 		if ( version_compare( PHP_VERSION, '8.0.0', '<' ) ) {
 			$errors[] = sprintf(
 				/* translators: %s: required PHP version */
-				__( 'GF Media Exporter requires PHP version %s or greater.', 'gf-media-exporter' ),
+				__( 'Entries & Media Exporter by Naren Jadav requires PHP version %s or greater.', 'entries-media-exporter-nj' ),
 				'8.0.0'
 			);
 		}
 
 		// Check Gravity Forms.
 		if ( ! class_exists( 'GFAPI' ) ) {
-			$errors[] = __( 'GF Media Exporter requires Gravity Forms to be installed and activated.', 'gf-media-exporter' );
+			$errors[] = __( 'Entries & Media Exporter by Naren Jadav requires Gravity Forms to be installed and activated.', 'entries-media-exporter-nj' );
 		}
 
 		// Check ZipArchive extension.
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			$errors[] = __( 'GF Media Exporter requires the PHP ZipArchive extension to build the ZIP package.', 'gf-media-exporter' );
+			$errors[] = __( 'Entries & Media Exporter by Naren Jadav requires the PHP ZipArchive extension to build the ZIP package.', 'entries-media-exporter-nj' );
 		}
 
 		return array(

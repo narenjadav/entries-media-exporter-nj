@@ -1,14 +1,14 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Autoloader class for GF Media Exporter.
+ * Autoloader class for Entries & Media Exporter by Naren Jadav.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Loader {
 
@@ -24,19 +24,19 @@ class Loader {
 	/**
 	 * Autoload classes based on namespace and WordPress standards.
 	 *
-	 * Maps namespace \GFME\My_Class to includes/class-my-class.php (lowercase, hyphenated).
+	 * Maps namespace \EMENJ\My_Class to includes/class-my-class.php (lowercase, hyphenated).
 	 *
 	 * @param string $class Class name to load.
 	 * @return void
 	 */
 	public static function autoload( $class ) {
 		// Only autoload classes in our namespace.
-		if ( 0 !== strpos( $class, 'GFME\\' ) ) {
+		if ( 0 !== strpos( $class, 'EMENJ\\' ) ) {
 			return;
 		}
 
 		// Remove the namespace prefix.
-		$relative_class = substr( $class, 5 );
+		$relative_class = substr( $class, 6 );
 
 		// Convert class name to WordPress standard filename format.
 		// Class Name: My_Class_Name -> class-my-class-name.php
@@ -50,7 +50,7 @@ class Loader {
 			$sub_path = strtolower( implode( '/', $parts ) ) . '/';
 		}
 
-		$filepath = GFME_PATH . 'includes/' . $sub_path . $file;
+		$filepath = EME_NJ_PATH . 'includes/' . $sub_path . $file;
 
 		if ( file_exists( $filepath ) ) {
 			require_once $filepath;

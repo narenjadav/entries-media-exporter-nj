@@ -1,4 +1,4 @@
-=== GF Media Exporter ===
+=== Entries & Media Exporter by Naren Jadav ===
 Contributors: narenjadav
 Tags: gravity forms, export, file upload, csv, zip
 Requires at least: 5.8
@@ -11,7 +11,7 @@ Export Gravity Forms entries to CSV alongside all uploaded files packaged inside
 
 == Description ==
 
-Gravity Forms default exporter outputs file upload fields as absolute URLs inside CSV reports. **GF Media Exporter** enhances this behavior by compiling all actual uploaded media files, images, documents, and multiple-file uploads into single ZIP packages downloadable directly in your web browser.
+Gravity Forms default exporter outputs file upload fields as absolute URLs inside CSV reports. **Entries & Media Exporter by Naren Jadav** enhances this behavior by compiling all actual uploaded media files, images, documents, and multiple-file uploads into single ZIP packages downloadable directly in your web browser.
 
 === Key Features ===
 
@@ -23,7 +23,7 @@ Gravity Forms default exporter outputs file upload fields as absolute URLs insid
 
 == Installation ==
 
-1. Upload the `gf-media-exporter` folder to the `/wp-content/plugins/` directory.
+1. Upload the `entries-media-exporter-nj` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Access the controls through Gravity Forms -> Media Exporter (or Tools -> Media Exporter if active).
 

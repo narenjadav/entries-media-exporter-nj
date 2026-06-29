@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles the WordPress administration screens.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Admin {
 
@@ -36,9 +36,9 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 		// Register AJAX actions.
-		add_action( 'wp_ajax_gfme_get_form_details', array( $this, 'ajax_get_form_details' ) );
-		add_action( 'wp_ajax_gfme_seed_entries', array( $this, 'ajax_seed_entries' ) );
-		add_action( 'wp_ajax_gfme_remove_entries', array( $this, 'ajax_remove_entries' ) );
+		add_action( 'wp_ajax_emenj_get_form_details', array( $this, 'ajax_get_form_details' ) );
+		add_action( 'wp_ajax_emenj_seed_entries', array( $this, 'ajax_seed_entries' ) );
+		add_action( 'wp_ajax_emenj_remove_entries', array( $this, 'ajax_remove_entries' ) );
 	}
 
 	/**
@@ -51,10 +51,10 @@ class Admin {
 
 		add_submenu_page(
 			$parent,
-			__( 'GF Media Exporter', 'gf-media-exporter' ),
-			__( 'Media Exporter', 'gf-media-exporter' ),
+			__( 'Entries & Media Exporter by Naren Jadav', 'entries-media-exporter-nj' ),
+			__( 'Media Exporter', 'entries-media-exporter-nj' ),
 			'manage_options',
-			GFME_SLUG,
+			EME_NJ_SLUG,
 			array( $this, 'render_page' )
 		);
 	}
@@ -66,21 +66,21 @@ class Admin {
 	 * @return void
 	 */
 	public function enqueue_assets( string $hook ) {
-		if ( strpos( $hook, GFME_SLUG ) === false ) {
+		if ( strpos( $hook, EME_NJ_SLUG ) === false ) {
 			return;
 		}
 
 		// Enqueue SweetAlert2 from local assets.
 		wp_enqueue_style(
 			'sweetalert2',
-			GFME_URL . 'assets/css/sweetalert2.min.css',
+			EME_NJ_URL . 'assets/css/sweetalert2.min.css',
 			array(),
 			'11.10.0'
 		);
 
 		wp_enqueue_script(
 			'sweetalert2',
-			GFME_URL . 'assets/js/sweetalert2.all.min.js',
+			EME_NJ_URL . 'assets/js/sweetalert2.all.min.js',
 			array(),
 			'11.10.0',
 			true
@@ -89,13 +89,13 @@ class Admin {
 		// Enqueue Flatpickr (Datepicker) from local assets.
 		wp_enqueue_style(
 			'flatpickr',
-			GFME_URL . 'assets/css/flatpickr.min.css',
+			EME_NJ_URL . 'assets/css/flatpickr.min.css',
 			array(),
 			'4.6.13'
 		);
 		wp_enqueue_script(
 			'flatpickr',
-			GFME_URL . 'assets/js/flatpickr.min.js',
+			EME_NJ_URL . 'assets/js/flatpickr.min.js',
 			array(),
 			'4.6.13',
 			true
@@ -104,40 +104,40 @@ class Admin {
 		// Enqueue Select2 (Searchable Dropdown) from local assets.
 		wp_enqueue_style(
 			'select2',
-			GFME_URL . 'assets/css/select2.min.css',
+			EME_NJ_URL . 'assets/css/select2.min.css',
 			array(),
 			'4.1.0'
 		);
 		wp_enqueue_script(
 			'select2',
-			GFME_URL . 'assets/js/select2.min.js',
+			EME_NJ_URL . 'assets/js/select2.min.js',
 			array( 'jquery' ),
 			'4.1.0',
 			true
 		);
 
 		wp_enqueue_style(
-			'gfme-admin-css',
-			GFME_URL . 'assets/css/admin.css',
+			'emenj-admin-css',
+			EME_NJ_URL . 'assets/css/admin.css',
 			array( 'sweetalert2', 'flatpickr', 'select2' ),
-			GFME_VERSION
+			EME_NJ_VERSION
 		);
 
 		wp_enqueue_script(
-			'gfme-admin-js',
-			GFME_URL . 'assets/js/admin.js',
+			'emenj-admin-js',
+			EME_NJ_URL . 'assets/js/admin.js',
 			array( 'jquery', 'sweetalert2', 'flatpickr', 'select2' ),
-			GFME_VERSION,
+			EME_NJ_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'gfme-admin-js',
-			'gfme_admin',
+			'emenj-admin-js',
+			'emenj_admin',
 			array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'gfme_admin_nonce' ),
-				'slug'     => GFME_SLUG
+				'nonce'    => wp_create_nonce( 'emenj_admin_nonce' ),
+				'slug'     => EME_NJ_SLUG
 			)
 		);
 	}
@@ -149,7 +149,7 @@ class Admin {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'gf-media-exporter' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'entries-media-exporter-nj' ) );
 		}
 
 		$forms = $this->gf->get_forms();
@@ -174,27 +174,27 @@ class Admin {
 		}
 
 		// Load template file.
-		include GFME_PATH . 'templates/admin-page.php';
+		include EME_NJ_PATH . 'templates/admin-page.php';
 	}
 
 	/**
 	 * AJAX handler to get form details fragment.
 	 */
 	public function ajax_get_form_details() {
-		check_ajax_referer( 'gfme_admin_nonce', 'nonce' );
+		check_ajax_referer( 'emenj_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$form_id = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
 		if ( ! $form_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$selected_form = $this->gf->get_form( $form_id );
 		if ( ! $selected_form ) {
-			wp_send_json_error( array( 'message' => __( 'Form not found.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Form not found.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$file_fields = $this->gf->get_file_fields( $selected_form );
@@ -203,7 +203,7 @@ class Admin {
 		$selected_id = $form_id;
 
 		ob_start();
-		include GFME_PATH . 'templates/form-details.php';
+		include EME_NJ_PATH . 'templates/form-details.php';
 		$html = ob_get_clean();
 
 		wp_send_json_success( array( 'html' => $html ) );
@@ -213,17 +213,17 @@ class Admin {
 	 * AJAX handler to seed entries.
 	 */
 	public function ajax_seed_entries() {
-		check_ajax_referer( 'gfme_admin_nonce', 'nonce' );
+		check_ajax_referer( 'emenj_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
 		$count   = isset( $_POST['count'] ) ? max( 1, min( 20, absint( $_POST['count'] ) ) ) : 3;
 
 		if ( ! $form_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$result = $this->gf->seed_sample_entries( $form_id, $count );
@@ -237,7 +237,7 @@ class Admin {
 		wp_send_json_success( array(
 			'message'     => sprintf(
 				/* translators: %d: number of seeded entries */
-				_n( 'Created %d sample entry with files.', 'Created %d sample entries with files.', $result, 'gf-media-exporter' ),
+				_n( 'Created %d sample entry with files.', 'Created %d sample entries with files.', $result, 'entries-media-exporter-nj' ),
 				$result
 			),
 			'entry_count' => $entry_count,
@@ -249,31 +249,31 @@ class Admin {
 	 * AJAX handler to remove entries.
 	 */
 	public function ajax_remove_entries() {
-		check_ajax_referer( 'gfme_admin_nonce', 'nonce' );
+		check_ajax_referer( 'emenj_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
 		if ( ! $form_id ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'entries-media-exporter-nj' ) ) );
 		}
 
-		if ( empty( $_POST['gfme_confirm'] ) ) {
-			wp_send_json_error( array( 'message' => __( 'Please check the confirmation box before deleting entries.', 'gf-media-exporter' ) ) );
+		if ( empty( $_POST['emenj_confirm'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Please check the confirmation box before deleting entries.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$date_start = Helpers::sanitize_date( sanitize_text_field( wp_unslash( $_POST['date_start'] ?? '' ) ) );
 		$date_end   = Helpers::sanitize_date( sanitize_text_field( wp_unslash( $_POST['date_end'] ?? '' ) ) );
 
 		if ( $date_start && $date_end && $date_start > $date_end ) {
-			wp_send_json_error( array( 'message' => __( 'The start date must be before the end date.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'The start date must be before the end date.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$export = Plugin::get_instance()->get_export();
 		if ( ! $export ) {
-			wp_send_json_error( array( 'message' => __( 'Exporter not loaded.', 'gf-media-exporter' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Exporter not loaded.', 'entries-media-exporter-nj' ) ) );
 		}
 
 		$result = $export->run_remove( $form_id, array(
@@ -290,7 +290,7 @@ class Admin {
 
 		$message = sprintf(
 			/* translators: 1: entries deleted count, 2: files deleted count */
-			__( 'Removed %1$d entries and deleted %2$d files from the server.', 'gf-media-exporter' ),
+			__( 'Removed %1$d entries and deleted %2$d files from the server.', 'entries-media-exporter-nj' ),
 			$result['entries_deleted'],
 			$result['files_deleted']
 		);
@@ -298,7 +298,7 @@ class Admin {
 		if ( $result['files_failed'] > 0 ) {
 			$message .= ' ' . sprintf(
 				/* translators: %d: files failed count */
-				_n( '%d file could not be deleted (check permissions).', '%d files could not be deleted (check permissions).', $result['files_failed'], 'gf-media-exporter' ),
+				_n( '%d file could not be deleted (check permissions).', '%d files could not be deleted (check permissions).', $result['files_failed'], 'entries-media-exporter-nj' ),
 				$result['files_failed']
 			);
 		}

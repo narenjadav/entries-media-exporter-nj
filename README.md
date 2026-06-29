@@ -1,4 +1,4 @@
-# GF Media Exporter
+# Entries & Media Exporter by Naren Jadav
 
 [![WordPress Version](https://img.shields.io/badge/WordPress-5.8+-blue.svg)](https://wordpress.org)
 [![PHP Version](https://img.shields.io/badge/PHP-8.0+-green.svg)](https://php.net)
@@ -12,7 +12,7 @@ A refactored, modernized, and object-oriented companion plugin for **Gravity For
 ## 🌟 Key Features
 
 * **📦 Complete ZIP Archiving:** Packages form submissions alongside actual uploaded files. The exported ZIP contains an `entries.csv` summary sheet and a `files/` folder storing the corresponding media assets.
-* **⚡ Single-Page AJAX Dashboard:** Load forms, seed mock entries, and purge files completely asynchronously. The browser URL remains clean (`/wp-admin/admin.php?page=gfme-exporter`) at all times.
+* **⚡ Single-Page AJAX Dashboard:** Load forms, seed mock entries, and purge files completely asynchronously. The browser URL remains clean (`/wp-admin/admin.php?page=emenj-exporter`) at all times.
 * **🛡️ Traversing & Path Guards:** Enforces strict relative path resolution, matching upload directory boundaries to prevent directory traversal vulnerabilities.
 * **📁 Smart De-duplication:** Automatically identifies matching filenames and appends incremental numbering suffixes (`-1`, `-2`, etc.) to prevent data loss in the ZIP compiler.
 * **📅 Date Window Filtering:** Limit ZIP compile packages or database purges to entries submitted within specific calendar dates.
@@ -33,9 +33,9 @@ A refactored, modernized, and object-oriented companion plugin for **Gravity For
 
 ## 🚀 Installation & Setup
 
-1. Copy the `gf-media-exporter` folder into your `/wp-content/plugins/` directory.
+1. Copy the `entries-media-exporter-nj` folder into your `/wp-content/plugins/` directory.
 2. Log in to your WordPress dashboard and navigate to **Plugins** -> **Installed Plugins**.
-3. Locate **GF Media Exporter** and click **Activate**.
+3. Locate **Entries & Media Exporter by Naren Jadav** and click **Activate**.
 4. Access the plugin dashboard via **Forms** -> **Media Exporter** (or fallback under **Tools** -> **Media Exporter**).
 
 ---
@@ -45,7 +45,7 @@ A refactored, modernized, and object-oriented companion plugin for **Gravity For
 The plugin follows clean **Object-Oriented Programming (OOP)** practices, separation of concerns, and WordPress Coding Standards:
 
 ```
-gf-media-exporter/
+entries-media-exporter-nj/
 ├── assets/
 │   ├── css/
 │   │   ├── admin.css           # Premium layout overrides, tooltips, & Select2 styling
@@ -68,13 +68,13 @@ gf-media-exporter/
 │   ├── class-notices.php       # Admin notices framework
 │   └── class-plugin.php        # Main orchestrator singleton container
 ├── languages/
-│   └── gf-media-exporter.pot   # Translation catalog
+│   └── entries-media-exporter-nj.pot   # Translation catalog
 ├── templates/
 │   ├── admin-page.php          # Skeleton layout and selector dropdown structure
 │   └── form-details.php        # Dynamic card forms loaded asynchronously via AJAX
 ├── readme.txt                  # Official WordPress.org directory documentation
 ├── uninstall.php               # Purges data cleanly on plugin deletion
-└── gf-media-exporter.php       # Main plugin bootstrap loader file
+└── entries-media-exporter-nj.php       # Main plugin bootstrap loader file
 ```
 
 ---

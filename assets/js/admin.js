@@ -2,13 +2,13 @@
 	'use strict';
 
 	$(document).ready(function() {
-		const $overlay = $('#gfme-loading-overlay');
-		const $message = $('#gfme-loading-message');
-		const $container = $('#gfme-dashboard-container');
-		let $calTooltip = $('#gfme-calendar-tooltip');
+		const $overlay = $('#emenj-loading-overlay');
+		const $message = $('#emenj-loading-message');
+		const $container = $('#emenj-dashboard-container');
+		let $calTooltip = $('#emenj-calendar-tooltip');
 
 		if ($calTooltip.length === 0) {
-			$calTooltip = $('<div id="gfme-calendar-tooltip" style="display:none;position:absolute;z-index:999999;background:#1e293b;color:#ffffff;padding:6px 10px;font-size:11px;font-weight:600;border-radius:4px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);pointer-events:none;white-space:nowrap;line-height:1.2;"></div>');
+			$calTooltip = $('<div id="emenj-calendar-tooltip" style="display:none;position:absolute;z-index:999999;background:#1e293b;color:#ffffff;padding:6px 10px;font-size:11px;font-weight:600;border-radius:4px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);pointer-events:none;white-space:nowrap;line-height:1.2;"></div>');
 			$('body').append($calTooltip);
 		}
 
@@ -30,7 +30,7 @@
 
 		// Initialize Select2 Searchable Dropdown.
 		if ($.fn.select2) {
-			$('#gfme_form_id').select2({
+			$('#emenj_form_id').select2({
 				placeholder: '— Select a form —',
 				width: '320px'
 			}).on('change', function() {
@@ -49,13 +49,13 @@
 			$overlay.css('display', 'flex');
 
 			$.ajax({
-				url: gfme_admin.ajax_url,
+				url: emenj_admin.ajax_url,
 				type: 'GET',
 				dataType: 'json',
 				data: {
-					action: 'gfme_get_form_details',
+					action: 'emenj_get_form_details',
 					form_id: formId,
-					nonce: gfme_admin.nonce
+					nonce: emenj_admin.nonce
 				},
 				success: function(response) {
 					$overlay.hide();
@@ -94,13 +94,13 @@
 		}
 
 		// Check if a form is selected on load.
-		const initialFormId = $('#gfme_form_id').val();
+		const initialFormId = $('#emenj_form_id').val();
 		if (initialFormId && initialFormId !== '0') {
 			loadFormDetails(initialFormId);
 		}
 
 		// AJAX: Submit Seed Data Form.
-		$(document).on('submit', '.gfme-seed-form', function(e) {
+		$(document).on('submit', '.emenj-seed-form', function(e) {
 			e.preventDefault();
 			const $form = $(this);
 			const formId = $form.find('input[name="form_id"]').val();
@@ -110,19 +110,19 @@
 			$overlay.css('display', 'flex');
 
 			$.ajax({
-				url: gfme_admin.ajax_url,
+				url: emenj_admin.ajax_url,
 				type: 'POST',
 				dataType: 'json',
 				data: {
-					action: 'gfme_seed_entries',
+					action: 'emenj_seed_entries',
 					form_id: formId,
 					count: count,
-					nonce: gfme_admin.nonce
+					nonce: emenj_admin.nonce
 				},
 				success: function(response) {
 					$overlay.hide();
 					if (response.success) {
-						$('.gfme-entry-count-badge').text(response.data.entry_count);
+						$('.emenj-entry-count-badge').text(response.data.entry_count);
 						
 						// Update data-min-date attributes.
 						$container.find('#date_start, #date_end, #rm_date_start, #rm_date_end')
@@ -171,12 +171,12 @@
 		});
 
 		// AJAX: Submit Danger Zone Removal Form.
-		$(document).on('submit', '.gfme-remove-form', function(e) {
+		$(document).on('submit', '.emenj-remove-form', function(e) {
 			e.preventDefault();
 			const $form = $(this);
 
 			// Verify confirmation checkbox
-			const $confirmBox = $form.find('#gfme_confirm_box');
+			const $confirmBox = $form.find('#emenj_confirm_box');
 			if (!$confirmBox.prop('checked')) {
 				if (typeof Swal !== 'undefined') {
 					Swal.fire({
@@ -225,25 +225,25 @@
 			$overlay.css('display', 'flex');
 
 			$.ajax({
-				url: gfme_admin.ajax_url,
+				url: emenj_admin.ajax_url,
 				type: 'POST',
 				dataType: 'json',
 				data: {
-					action: 'gfme_remove_entries',
+					action: 'emenj_remove_entries',
 					form_id: formId,
 					date_start: dateStart,
 					date_end: dateEnd,
-					gfme_confirm: 1,
-					nonce: gfme_admin.nonce
+					emenj_confirm: 1,
+					nonce: emenj_admin.nonce
 				},
 				success: function(response) {
 					$overlay.hide();
 					if (response.success) {
-						$('.gfme-entry-count-badge').text(response.data.entry_count);
+						$('.emenj-entry-count-badge').text(response.data.entry_count);
 						
 						$form.find('input[name="date_start"]').val('');
 						$form.find('input[name="date_end"]').val('');
-						$form.find('#gfme_confirm_box').prop('checked', false);
+						$form.find('#emenj_confirm_box').prop('checked', false);
 
 						$container.find('#date_start, #date_end, #rm_date_start, #rm_date_end')
 							.data('min-date', response.data.min_date)
@@ -349,17 +349,17 @@
 		});
 
 		// Dynamic download spinner using cookies.
-		$(document).on('submit', '.gfme-export-form', function() {
+		$(document).on('submit', '.emenj-export-form', function() {
 			const token = new Date().getTime();
-			$(this).append($('<input type="hidden" name="gfme_download_token" />').val(token));
+			$(this).append($('<input type="hidden" name="emenj_download_token" />').val(token));
 
 			$message.text('Preparing ZIP export package... Please wait.');
 			$overlay.css('display', 'flex');
 
 			const checkInterval = setInterval(function() {
-				if (getCookie('gfme_download_token') === String(token)) {
+				if (getCookie('emenj_download_token') === String(token)) {
 					clearInterval(checkInterval);
-					document.cookie = 'gfme_download_token=; Max-Age=-99999999; path=/;';
+					document.cookie = 'emenj_download_token=; Max-Age=-99999999; path=/;';
 					$overlay.hide();
 					Swal.fire({
 						icon: 'success',

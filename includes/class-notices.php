@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles rendering admin notices.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Notices {
 

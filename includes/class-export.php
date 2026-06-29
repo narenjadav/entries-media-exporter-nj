@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,7 +11,7 @@ use WP_Error;
 /**
  * Handles processing export, removal, and seeding requests.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Export {
 
@@ -55,14 +55,14 @@ class Export {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page   = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$action = isset( $_REQUEST['gfme_action'] ) ? sanitize_key( wp_unslash( $_REQUEST['gfme_action'] ) ) : '';
+		$action = isset( $_REQUEST['emenj_action'] ) ? sanitize_key( wp_unslash( $_REQUEST['emenj_action'] ) ) : '';
 
-		if ( GFME_SLUG !== $page || 'export' !== $action ) {
+		if ( EME_NJ_SLUG !== $page || 'export' !== $action ) {
 			return;
 		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to perform this action.', 'gf-media-exporter' ) );
+			wp_die( esc_html__( 'You do not have permission to perform this action.', 'entries-media-exporter-nj' ) );
 		}
 
 		$this->handle_export();
@@ -78,7 +78,7 @@ class Export {
 	public function run_remove( int $form_id, array $options ) {
 		$form = $this->gf->get_form( $form_id );
 		if ( ! $form ) {
-			return new WP_Error( 'no_form', __( 'Form not found.', 'gf-media-exporter' ) );
+			return new WP_Error( 'no_form', __( 'Form not found.', 'entries-media-exporter-nj' ) );
 		}
 
 		if ( function_exists( 'set_time_limit' ) ) {
@@ -160,13 +160,13 @@ class Export {
 		$form_id = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
 
 		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-		if ( ! $form_id || ! wp_verify_nonce( $nonce, 'gfme_export_' . $form_id ) ) {
-			$this->redirect_with_error( $form_id, __( 'Security check failed. Please try again.', 'gf-media-exporter' ) );
+		if ( ! $form_id || ! wp_verify_nonce( $nonce, 'emenj_export_' . $form_id ) ) {
+			$this->redirect_with_error( $form_id, __( 'Security check failed. Please try again.', 'entries-media-exporter-nj' ) );
 		}
 
 		$form = $this->gf->get_form( $form_id );
 		if ( ! $form ) {
-			$this->redirect_with_error( $form_id, __( 'Form not found.', 'gf-media-exporter' ) );
+			$this->redirect_with_error( $form_id, __( 'Form not found.', 'entries-media-exporter-nj' ) );
 		}
 
 		$raw_start  = isset( $_GET['date_start'] ) ? sanitize_text_field( wp_unslash( $_GET['date_start'] ) ) : '';
@@ -176,7 +176,7 @@ class Export {
 		$files_only = ! empty( $_GET['files_only'] );
 
 		if ( $date_start && $date_end && $date_start > $date_end ) {
-			$this->redirect_with_error( $form_id, __( 'The start date must be before the end date.', 'gf-media-exporter' ) );
+			$this->redirect_with_error( $form_id, __( 'The start date must be before the end date.', 'entries-media-exporter-nj' ) );
 		}
 
 		$this->run_export(
@@ -199,7 +199,7 @@ class Export {
 	private function run_export( int $form_id, array $options ) {
 		$form = $this->gf->get_form( $form_id );
 		if ( ! $form ) {
-			$this->redirect_with_error( $form_id, __( 'Form not found.', 'gf-media-exporter' ) );
+			$this->redirect_with_error( $form_id, __( 'Form not found.', 'entries-media-exporter-nj' ) );
 		}
 
 		if ( function_exists( 'set_time_limit' ) ) {
@@ -210,17 +210,17 @@ class Export {
 		$file_fields = $this->gf->get_file_fields( $form );
 
 		if ( $options['files_only'] && empty( $file_fields ) ) {
-			$this->redirect_with_error( $form_id, __( 'Files-only export was requested, but this form has no file fields.', 'gf-media-exporter' ) );
+			$this->redirect_with_error( $form_id, __( 'Files-only export was requested, but this form has no file fields.', 'entries-media-exporter-nj' ) );
 		}
 
 		$search_criteria = $this->build_search_criteria( $options );
 		$entries         = $this->gf->get_matching_entries( $form_id, $search_criteria );
 
 		// Prepare a temp working zip.
-		$tmp_zip = wp_tempnam( 'gfme-export' );
+		$tmp_zip = wp_tempnam( 'emenj-export' );
 		$zip     = new ZipArchive();
 		if ( true !== $zip->open( $tmp_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-			$this->redirect_with_error( $form_id, __( 'Could not create the ZIP archive.', 'gf-media-exporter' ) );
+			$this->redirect_with_error( $form_id, __( 'Could not create the ZIP archive.', 'entries-media-exporter-nj' ) );
 		}
 
 		$added           = 0;
@@ -276,9 +276,9 @@ class Export {
 
 		// Set download token cookie if present.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$token = isset( $_GET['gfme_download_token'] ) ? sanitize_key( wp_unslash( $_GET['gfme_download_token'] ) ) : '';
+		$token = isset( $_GET['emenj_download_token'] ) ? sanitize_key( wp_unslash( $_GET['emenj_download_token'] ) ) : '';
 		if ( $token ) {
-			setcookie( 'gfme_download_token', $token, time() + 600, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl() );
+			setcookie( 'emenj_download_token', $token, time() + 600, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl() );
 		}
 
 		nocache_headers();
@@ -422,7 +422,7 @@ class Export {
 			array(
 				'timeout'  => 30,
 				'stream'   => true,
-				'filename' => wp_tempnam( 'gfme-dl' ),
+				'filename' => wp_tempnam( 'emenj-dl' ),
 			)
 		);
 
@@ -456,9 +456,9 @@ class Export {
 	private function redirect_with_error( int $form_id, string $message ) {
 		$url = add_query_arg(
 			array(
-				'page'       => GFME_SLUG,
+				'page'       => EME_NJ_SLUG,
 				'form_id'    => absint( $form_id ),
-				'gfme_error' => rawurlencode( $message ),
+				'emenj_error' => rawurlencode( $message ),
 			),
 			admin_url( 'admin.php' )
 		);
@@ -476,9 +476,9 @@ class Export {
 	private function redirect_with_notice( int $form_id, string $message ) {
 		$url = add_query_arg(
 			array(
-				'page'        => GFME_SLUG,
+				'page'        => EME_NJ_SLUG,
 				'form_id'     => absint( $form_id ),
-				'gfme_notice' => rawurlencode( $message ),
+				'emenj_notice' => rawurlencode( $message ),
 			),
 			admin_url( 'admin.php' )
 		);

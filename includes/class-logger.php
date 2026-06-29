@@ -1,5 +1,5 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles error and debug logging.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Logger {
 
@@ -25,7 +25,7 @@ class Logger {
 		}
 
 		$formatted = sprintf(
-			'[%1$s] [GFME %2$s] %3$s',
+			'[%1$s] [EMENJ %2$s] %3$s',
 			gmdate( 'Y-m-d H:i:s' ),
 			strtoupper( $level ),
 			$message

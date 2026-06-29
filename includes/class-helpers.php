@@ -1,14 +1,14 @@
 <?php
-namespace GFME;
+namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * Utility helper methods for GF Media Exporter.
+ * Utility helper methods for Entries & Media Exporter by Naren Jadav.
  *
- * @package GFME
+ * @package EMENJ
  */
 class Helpers {
 

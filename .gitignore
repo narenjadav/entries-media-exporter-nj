@@ -7,8 +7,8 @@ ehthumbs.db
 # Temp and log files
 *.tmp
 *.log
-gfme-dl-*
-gfme-export-*
+emenj-dl-*
+emenj-export-*
 
 # Scratch test files
 /scratch/
