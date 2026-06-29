@@ -1,5 +1,5 @@
 === Entries & Media Exporter by Naren Jadav ===
-Contributors: narenjadav
+Contributors: nikkjadav
 Tags: gravity forms, export, file upload, csv, zip
 Requires at least: 5.8
 Tested up to: 7.0
