@@ -1,14 +1,17 @@
 <?php
 /**
  * Plugin Name: Entries & Media Exporter by Naren Jadav
+ * Plugin URI:  https://github.com/narenjadav/gf-media-exporter
  * Description: Refactored and modernized tool to export Gravity Forms entries to CSV with all uploaded files packaged into a downloadable ZIP, with options for automatic post-export server cleanup.
  * Version:     1.0.0
+ * Requires at least: 5.8
+ * Requires PHP: 8.0
  * Author:      Naren Jadav
  * Author URI:  https://narenjadav.com
  * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: entries-media-exporter-nj
  * Domain Path: /languages
- * Requires PHP: 8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

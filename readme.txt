@@ -6,6 +6,7 @@ Tested up to: 7.0
 Requires PHP: 8.0
 Stable tag: 1.0.0
 License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Export Gravity Forms entries to CSV alongside all uploaded files packaged inside a single ZIP archive.
 
@@ -27,7 +28,25 @@ Gravity Forms default exporter outputs file upload fields as absolute URLs insid
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Access the controls through Gravity Forms -> Media Exporter (or Tools -> Media Exporter if active).
 
+== Frequently Asked Questions ==
+
+= Does this plugin support multi-file upload fields? =
+Yes, all multiple-file uploads are extracted, parsed, and downloaded together.
+
+= Does this work with remote storage providers? =
+It supports local webserver storage paths natively and falls back to HTTP stream downloads for remotely hosted uploaded files.
+
+== Screenshots ==
+
+1. The main dashboard showing form select options, date ranges, and Danger Zone settings.
+2. The custom SweetAlert2 toast notification following a successful file compilation.
+
 == Changelog ==
 
 = 1.0.0 =
 * Initial release of refactored and modernized OOP code.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial release.
