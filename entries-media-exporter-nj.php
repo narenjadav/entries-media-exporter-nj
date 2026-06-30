@@ -1,17 +1,25 @@
 <?php
 /**
- * Plugin Name: Entries & Media Exporter by Naren Jadav
- * Plugin URI:  https://github.com/narenjadav/entries-media-exporter-nj
- * Description: Refactored and modernized tool to export Gravity Forms entries to CSV with all uploaded files packaged into a downloadable ZIP, with options for automatic post-export server cleanup.
- * Version:     1.0.0
+ * Entries & Media Exporter by Naren Jadav
+ *
+ * @package           EMENJ
+ * @author            Naren Jadav
+ * @copyright         2026 Naren Jadav
+ * @license           GPL-2.0-or-later
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Entries & Media Exporter by Naren Jadav
+ * Plugin URI:        https://github.com/narenjadav/entries-media-exporter-nj
+ * Description:       Refactored and modernized tool to export Gravity Forms entries to CSV with all uploaded files packaged into a downloadable ZIP, with options for automatic post-export server cleanup.
+ * Version:           1.0.0
  * Requires at least: 5.8
- * Requires PHP: 8.0
- * Author:      Naren Jadav
- * Author URI:  https://narenjadav.com
- * License:     GPL-2.0-or-later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: entries-media-exporter-nj
- * Domain Path: /languages
+ * Requires PHP:      8.0
+ * Author:            Naren Jadav
+ * Author URI:        https://narenjadav.com
+ * Text Domain:       entries-media-exporter-nj
+ * Domain Path:       /languages
+ * License:           GPL v2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
