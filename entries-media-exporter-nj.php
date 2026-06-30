@@ -35,14 +35,16 @@ define( 'EME_NJ_URL', plugin_dir_url( __FILE__ ) );
 
 // Load Autoloader.
 require_once EME_NJ_PATH . 'includes/class-loader.php';
+\EMENJ\Loader::init();
+
+// Register Activation and Deactivation Hooks.
+register_activation_hook( EME_NJ_FILE, array( '\EMENJ\Plugin', 'activate' ) );
+register_deactivation_hook( EME_NJ_FILE, array( '\EMENJ\Plugin', 'deactivate' ) );
 
 // Initialize the plugin.
 add_action(
 	'plugins_loaded',
 	function () {
-		// Initialize autoloader.
-		\EMENJ\Loader::init();
-
 		// Boot main plugin instance.
 		\EMENJ\Plugin::get_instance();
 	}

@@ -112,4 +112,39 @@ class Plugin {
 	public function get_export(): ?Export {
 		return $this->export;
 	}
+
+	/**
+	 * Run on plugin activation to check dependencies.
+	 *
+	 * @return void
+	 */
+	public static function activate() {
+		$dependencies = new Dependencies();
+		$checks       = $dependencies->verify();
+
+		if ( ! $checks['status'] ) {
+			if ( ! function_exists( 'deactivate_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			deactivate_plugins( plugin_basename( EME_NJ_FILE ) );
+
+			wp_die(
+				wp_kses(
+					implode( '<br />', $checks['errors'] ),
+					array( 'br' => array() )
+				),
+				esc_html__( 'Plugin Activation Error', 'entries-media-exporter-nj' ),
+				array( 'back_link' => true )
+			);
+		}
+	}
+
+	/**
+	 * Run on plugin deactivation.
+	 *
+	 * @return void
+	 */
+	public static function deactivate() {
+		// Placeholder for future deactivation cleanup.
+	}
 }
