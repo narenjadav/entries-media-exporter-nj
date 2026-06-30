@@ -36,7 +36,6 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 		add_filter( 'plugin_action_links_' . plugin_basename( EME_NJ_FILE ), array( $this, 'add_plugin_action_links' ) );
-		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_row_meta' ), 10, 2 );
 
 		// Register AJAX actions.
 		add_action( 'wp_ajax_emenj_get_form_details', array( $this, 'ajax_get_form_details' ) );
@@ -160,25 +159,6 @@ class Admin {
 		);
 		array_unshift( $links, $settings_link );
 		return $links;
-	}
-
-	/**
-	 * Add custom row meta links on the plugins listing page.
-	 *
-	 * @param array  $plugin_meta Existing row meta.
-	 * @param string $plugin_file Plugin file path relative to plugins folder.
-	 * @return array Modified row meta.
-	 */
-	public function add_plugin_row_meta( array $plugin_meta, string $plugin_file ): array {
-		if ( plugin_basename( EME_NJ_FILE ) === $plugin_file ) {
-			$repo_url = 'https://github.com/narenjadav/entries-media-exporter-nj';
-			$plugin_meta[] = sprintf(
-				'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
-				esc_url( $repo_url ),
-				esc_html__( 'View Details', 'entries-media-exporter-nj' )
-			);
-		}
-		return $plugin_meta;
 	}
 
 	/**
