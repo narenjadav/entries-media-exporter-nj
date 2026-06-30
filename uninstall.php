@@ -10,20 +10,26 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// Clean up any developer seeder files.
-$uploads = wp_get_upload_dir();
-if ( empty( $uploads['error'] ) ) {
-	$dir_path = trailingslashit( $uploads['basedir'] ) . 'emenj-samples';
-	if ( is_dir( $dir_path ) ) {
-		$files = glob( $dir_path . '/*' );
-		if ( $files ) {
-			foreach ( $files as $file ) {
-				if ( is_file( $file ) ) {
-					wp_delete_file( $file );
-				}
+/**
+ * Perform uninstallation cleanup.
+ *
+ * @return void
+ */
+function emenj_uninstall_cleanup() {
+	$uploads = wp_get_upload_dir();
+	if ( empty( $uploads['error'] ) ) {
+		$dir_path = trailingslashit( $uploads['basedir'] ) . 'emenj-samples';
+		if ( is_dir( $dir_path ) ) {
+			global $wp_filesystem;
+			if ( ! $wp_filesystem ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+			if ( $wp_filesystem ) {
+				$wp_filesystem->delete( $dir_path, true );
 			}
 		}
-		// phpcs:ignore WordPress.VIP.FileSystemInputOnError.SafeDirectoryDelete
-		rmdir( $dir_path );
 	}
 }
+
+emenj_uninstall_cleanup();
