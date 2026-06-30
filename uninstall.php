@@ -10,4 +10,20 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// In the future, if options or transient data are added, clean them up here.
+// Clean up any developer seeder files.
+$uploads = wp_get_upload_dir();
+if ( empty( $uploads['error'] ) ) {
+	$dir_path = trailingslashit( $uploads['basedir'] ) . 'emenj-samples';
+	if ( is_dir( $dir_path ) ) {
+		$files = glob( $dir_path . '/*' );
+		if ( $files ) {
+			foreach ( $files as $file ) {
+				if ( is_file( $file ) ) {
+					wp_delete_file( $file );
+				}
+			}
+		}
+		// phpcs:ignore WordPress.VIP.FileSystemInputOnError.SafeDirectoryDelete
+		rmdir( $dir_path );
+	}
+}
