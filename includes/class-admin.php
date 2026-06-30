@@ -52,7 +52,7 @@ class Admin {
 		add_submenu_page(
 			$parent,
 			__( 'Entries & Media Exporter by Naren Jadav', 'entries-media-exporter-nj' ),
-			__( 'Media Exporter', 'entries-media-exporter-nj' ),
+			__( 'Entries & Media Exporter', 'entries-media-exporter-nj' ),
 			'manage_options',
 			EME_NJ_SLUG,
 			array( $this, 'render_page' )
