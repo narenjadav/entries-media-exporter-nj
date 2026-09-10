@@ -72,7 +72,7 @@ class Plugin {
 		$this->dependencies = new Dependencies();
 		$this->notices      = new Notices();
 
-		$this->bootstrap();
+		add_action( 'init', array( $this, 'bootstrap' ) );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	private function bootstrap() {
+	public function bootstrap() {
 		$checks = $this->dependencies->verify();
 
 		if ( ! $checks['status'] ) {
