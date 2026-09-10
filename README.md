@@ -24,7 +24,7 @@ A refactored, modernized, and object-oriented companion plugin for **Gravity For
 
 ## 🛠️ System Requirements
 
-* **WordPress:** 5.8 or higher (Tested up to `7.0`)
+* **WordPress:** 5.8 or higher (Tested up to `7.1`)
 * **PHP:** 8.0 or higher
 * **Gravity Forms:** 2.5 or higher
 * **PHP Extensions:** `ZipArchive` (required for compiler packaging)

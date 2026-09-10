@@ -1,4 +1,10 @@
 <?php
+/**
+ * Helper utilities class file for Entries & Media Exporter by Naren Jadav.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +29,13 @@ class Helpers {
 		if ( '' === $value ) {
 			return '';
 		}
-		return preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ? $value : '';
+		if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $value, $matches ) ) {
+			return '';
+		}
+		if ( ! checkdate( (int) $matches[2], (int) $matches[3], (int) $matches[1] ) ) {
+			return '';
+		}
+		return $value;
 	}
 
 	/**
@@ -35,7 +47,7 @@ class Helpers {
 	public static function safe_basename( string $name ): string {
 		$name = basename( $name );
 		$name = preg_replace( '/[^A-Za-z0-9._\-]/', '_', $name );
-		return $name === '' ? 'file' : $name;
+		return '' === $name ? 'file' : $name;
 	}
 
 	/**
@@ -63,13 +75,13 @@ class Helpers {
 		}
 
 		$relative = ltrim( substr( $file_url, strlen( $base_url ) ), '/' );
-		$relative = explode( '?', $relative )[0]; // strip query string
+		$relative = explode( '?', $relative )[0]; // Strip query string.
 		$path     = trailingslashit( $uploads['basedir'] ) . $relative;
 
 		// Guard against path traversal.
 		$real_base = realpath( $uploads['basedir'] );
 		$real_path = realpath( $path );
-		if ( ! $real_base || ! $real_path || 0 !== strpos( $real_path, $real_base ) ) {
+		if ( ! $real_base || ! $real_path || 0 !== strpos( $real_path, trailingslashit( $real_base ) ) ) {
 			return false;
 		}
 		return $real_path;
@@ -92,7 +104,7 @@ class Helpers {
 		$i    = 1;
 		do {
 			$candidate = ( '.' === $dir ? '' : $dir . '/' ) . $base . '-' . $i . ( $ext ? '.' . $ext : '' );
-			$i++;
+			++$i;
 		} while ( false !== $zip->locateName( $candidate ) );
 		return $candidate;
 	}

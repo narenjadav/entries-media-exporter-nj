@@ -1,4 +1,10 @@
 <?php
+/**
+ * Main plugin orchestrator class file for Entries & Media Exporter by Naren Jadav.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,6 +75,11 @@ class Plugin {
 		$this->bootstrap();
 	}
 
+	/**
+	 * Bootstrap the plugin, verify requirements, and initialize.
+	 *
+	 * @return void
+	 */
 	private function bootstrap() {
 		$checks = $this->dependencies->verify();
 

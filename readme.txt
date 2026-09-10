@@ -3,9 +3,9 @@ Contributors: nikkjadav
 Donate link: https://narenjadav.com/
 Tags: gravity forms, export, file upload, csv, zip
 Requires at least: 5.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,10 +44,21 @@ It supports local webserver storage paths natively and falls back to HTTP stream
 
 == Changelog ==
 
+= 1.0.1 =
+* Full compatibility validation with WordPress 7.1 and PHP 8.4.
+* Security hardening: Added CSV formula injection defense (CWE-1236) to sanitize exported spreadsheet cells.
+* Enhanced filesystem operations using native WP_Filesystem API for sample uploads and directory cleanup.
+* Modernized execution limit handling with wp_raise_memory_limit() and runtime checks.
+* Enhanced cookie delivery with modern SameSite Lax configuration.
+* Code quality improvements adhering to WordPress Coding Standards and Plugin Check requirements.
+
 = 1.0.0 =
 * Initial release of refactored and modernized OOP code.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Compatibility release for WordPress 7.1 with enhanced security, CSV formula protection, and PHP 8.4 compliance.
 
 = 1.0.0 =
 Initial release.

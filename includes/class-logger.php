@@ -1,4 +1,10 @@
 <?php
+/**
+ * Logger class file for Entries & Media Exporter by Naren Jadav.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {

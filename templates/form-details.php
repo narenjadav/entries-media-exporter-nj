@@ -41,12 +41,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						if ( empty( $file_fields ) ) {
 							esc_html_e( 'None', 'entries-media-exporter-nj' );
 						} else {
-							$names = array();
+							$emenj_field_names = array();
 							foreach ( $file_fields as $emenj_f ) {
-								$names[] = sprintf( '<code class="emenj-inline-code">%s (ID %d)</code>', esc_html( $emenj_f->label ), absint( $emenj_f->id ) );
+								$emenj_field_names[] = sprintf( '<code class="emenj-inline-code">%s (ID %d)</code>', esc_html( $emenj_f->label ), absint( $emenj_f->id ) );
 							}
 							echo wp_kses(
-								implode( ', ', $names ),
+								implode( ', ', $emenj_field_names ),
 								array(
 									'code' => array(
 										'class' => array(),
@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<div class="emenj-form-group">
 					<label class="emenj-checkbox-label">
-						<input type="checkbox" name="files_only" value="1" <?php disabled( ! empty( $file_fields ), false ); ?> />
+						<input type="checkbox" name="files_only" value="1" <?php disabled( empty( $file_fields ) ); ?> />
 						<span><strong><?php esc_html_e( 'Files Only', 'entries-media-exporter-nj' ); ?></strong> – <?php esc_html_e( 'Only package uploaded files and exclude the entries.csv file.', 'entries-media-exporter-nj' ); ?></span>
 					</label>
 					<?php if ( empty( $file_fields ) ) : ?>

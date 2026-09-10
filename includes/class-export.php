@@ -1,4 +1,10 @@
 <?php
+/**
+ * Export and Removal handler class.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,7 +59,7 @@ class Export {
 	 */
 	public function maybe_handle_requests() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$page   = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
+		$page = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$action = isset( $_REQUEST['emenj_action'] ) ? sanitize_key( wp_unslash( $_REQUEST['emenj_action'] ) ) : '';
 
@@ -81,9 +87,10 @@ class Export {
 			return new WP_Error( 'no_form', __( 'Form not found.', 'entries-media-exporter-nj' ) );
 		}
 
-		if ( function_exists( 'set_time_limit' ) ) {
+		wp_raise_memory_limit( 'admin' );
+		if ( function_exists( 'set_time_limit' ) && wp_is_ini_value_changeable( 'max_execution_time' ) ) {
 			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
-			@set_time_limit( 0 );
+			set_time_limit( 0 );
 		}
 
 		$file_fields     = $this->gf->get_file_fields( $form );
@@ -107,10 +114,10 @@ class Export {
 						continue;
 					}
 					if ( wp_delete_file( $local ) ) {
-						$files_deleted++;
+						++$files_deleted;
 						$this->maybe_remove_empty_dir( dirname( $local ) );
 					} else {
-						$files_failed++;
+						++$files_failed;
 					}
 				}
 			}
@@ -118,7 +125,7 @@ class Export {
 			// Delete entry record.
 			$deleted = $this->gf->delete_entry( absint( rgar( $entry, 'id' ) ) );
 			if ( ! is_wp_error( $deleted ) ) {
-				$entries_deleted++;
+				++$entries_deleted;
 			}
 		}
 
@@ -137,17 +144,25 @@ class Export {
 	 */
 	private function maybe_remove_empty_dir( string $dir ) {
 		$uploads = wp_get_upload_dir();
-		$base    = realpath( $uploads['basedir'] ?? '' );
+		$basedir = isset( $uploads['basedir'] ) ? $uploads['basedir'] : '';
+		$base    = realpath( $basedir );
 		$real    = realpath( $dir );
 
-		if ( ! $base || ! $real || $real === $base || 0 !== strpos( $real, $base ) ) {
+		if ( ! $base || ! $real || $real === $base || 0 !== strpos( $real, trailingslashit( $base ) ) ) {
 			return;
 		}
 
-		$items = @scandir( $real );
-		if ( is_array( $items ) && 0 === count( array_diff( $items, array( '.', '..' ) ) ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
-			@rmdir( $real );
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		if ( $wp_filesystem ) {
+			$dirlist = $wp_filesystem->dirlist( $real );
+			if ( is_array( $dirlist ) && empty( $dirlist ) ) {
+				$wp_filesystem->rmdir( $real );
+			}
 		}
 	}
 
@@ -202,9 +217,10 @@ class Export {
 			$this->redirect_with_error( $form_id, __( 'Form not found.', 'entries-media-exporter-nj' ) );
 		}
 
-		if ( function_exists( 'set_time_limit' ) ) {
+		wp_raise_memory_limit( 'admin' );
+		if ( function_exists( 'set_time_limit' ) && wp_is_ini_value_changeable( 'max_execution_time' ) ) {
 			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
-			@set_time_limit( 0 );
+			set_time_limit( 0 );
 		}
 
 		$file_fields = $this->gf->get_file_fields( $form );
@@ -247,7 +263,7 @@ class Export {
 					}
 
 					$entry_zip_paths[ $entry_id ][] = $zip_path;
-					$added++;
+					++$added;
 				}
 			}
 		}
@@ -273,12 +289,24 @@ class Export {
 			$form_id,
 			gmdate( 'Ymd-His' )
 		);
+		$filename  = sanitize_file_name( $filename );
 
 		// Set download token cookie if present.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$token = isset( $_GET['emenj_download_token'] ) ? sanitize_key( wp_unslash( $_GET['emenj_download_token'] ) ) : '';
 		if ( $token ) {
-			setcookie( 'emenj_download_token', $token, time() + 600, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl() );
+			setcookie(
+				'emenj_download_token',
+				$token,
+				array(
+					'expires'  => time() + 600,
+					'path'     => COOKIEPATH ? COOKIEPATH : '/',
+					'domain'   => COOKIE_DOMAIN,
+					'secure'   => is_ssl(),
+					'httponly' => false,
+					'samesite' => 'Lax',
+				)
+			);
 		}
 
 		nocache_headers();
@@ -309,7 +337,7 @@ class Export {
 				continue;
 			}
 			$columns[ (string) $field->id ] = $field->label;
-			$headers[]                       = $field->label;
+			$headers[]                      = $field->label;
 		}
 		$headers[] = 'files_in_zip';
 
@@ -319,7 +347,7 @@ class Export {
 			return '';
 		}
 
-		fputcsv( $fh, $headers );
+		fputcsv( $fh, array_map( array( $this, 'sanitize_csv_cell' ), $headers ) );
 
 		foreach ( $entries as $entry ) {
 			$row = array(
@@ -335,7 +363,7 @@ class Export {
 			$entry_id = absint( rgar( $entry, 'id' ) );
 			$paths    = isset( $entry_zip_paths[ $entry_id ] ) ? $entry_zip_paths[ $entry_id ] : array();
 			$row[]    = implode( ' | ', $paths );
-			fputcsv( $fh, $row );
+			fputcsv( $fh, array_map( array( $this, 'sanitize_csv_cell' ), $row ) );
 		}
 
 		rewind( $fh );
@@ -344,6 +372,24 @@ class Export {
 		fclose( $fh );
 
 		return "\xEF\xBB\xBF" . ( $csv ? $csv : '' );
+	}
+
+	/**
+	 * Neutralize potential CSV formula injection characters.
+	 *
+	 * @param mixed $value Cell value.
+	 * @return mixed Sanitized cell value.
+	 */
+	private function sanitize_csv_cell( $value ) {
+		if ( ! is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( '' !== $value && in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -431,7 +477,7 @@ class Export {
 		}
 
 		$code = wp_remote_retrieve_response_code( $response );
-		$tmp  = $response['filename'] ?? '';
+		$tmp  = isset( $response['filename'] ) ? $response['filename'] : '';
 		if ( 200 !== (int) $code || ! $tmp || ! is_readable( $tmp ) ) {
 			if ( $tmp ) {
 				wp_delete_file( $tmp );
@@ -456,8 +502,8 @@ class Export {
 	private function redirect_with_error( int $form_id, string $message ) {
 		$url = add_query_arg(
 			array(
-				'page'       => EME_NJ_SLUG,
-				'form_id'    => absint( $form_id ),
+				'page'        => EME_NJ_SLUG,
+				'form_id'     => absint( $form_id ),
 				'emenj_error' => rawurlencode( $message ),
 			),
 			admin_url( 'admin.php' )
@@ -476,8 +522,8 @@ class Export {
 	private function redirect_with_notice( int $form_id, string $message ) {
 		$url = add_query_arg(
 			array(
-				'page'        => EME_NJ_SLUG,
-				'form_id'     => absint( $form_id ),
+				'page'         => EME_NJ_SLUG,
+				'form_id'      => absint( $form_id ),
 				'emenj_notice' => rawurlencode( $message ),
 			),
 			admin_url( 'admin.php' )

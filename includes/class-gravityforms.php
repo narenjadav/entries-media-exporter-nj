@@ -1,4 +1,10 @@
 <?php
+/**
+ * Gravity Forms data interface class file for Entries & Media Exporter by Naren Jadav.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -104,9 +110,10 @@ class GravityForms {
 			if ( is_wp_error( $batch ) || empty( $batch ) ) {
 				break;
 			}
-			$entries = array_merge( $entries, $batch );
-			$offset += $page_size;
-		} while ( count( $batch ) === $page_size );
+			$entries     = array_merge( $entries, $batch );
+			$offset     += $page_size;
+			$batch_count = count( $batch );
+		} while ( $batch_count === $page_size );
 		return $entries;
 	}
 
@@ -198,7 +205,8 @@ class GravityForms {
 					if ( empty( $urls ) ) {
 						continue;
 					}
-					$is_multi = ( 'fileupload' === $field->type && ! empty( $field->multipleFiles ) );
+					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Property defined by Gravity Forms GF_Field_FileUpload class.
+					$is_multi      = ( 'fileupload' === $field->type && ! empty( $field->multipleFiles ) );
 					$entry[ $fid ] = $is_multi ? wp_json_encode( $urls ) : $urls[0];
 					continue;
 				}
@@ -219,7 +227,7 @@ class GravityForms {
 
 			$result = GFAPI::add_entry( $entry );
 			if ( ! is_wp_error( $result ) ) {
-				$created++;
+				++$created;
 			}
 		}
 
@@ -232,18 +240,26 @@ class GravityForms {
 	/**
 	 * Write small dummy files for seeding.
 	 *
-	 * @param string   $dir_path    Target base directory path.
-	 * @param string   $dir_url     Target base URL path.
-	 * @param int      $entry_index Seed index.
+	 * @param string    $dir_path    Target base directory path.
+	 * @param string    $dir_url     Target base URL path.
+	 * @param int       $entry_index Seed index.
 	 * @param \GF_Field $field       GF Field instance.
 	 * @return array List of URL paths created.
 	 */
 	private function generate_sample_files( string $dir_path, string $dir_url, int $entry_index, $field ): array {
-		$urls     = array();
+		$urls = array();
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Property defined by Gravity Forms GF_Field_FileUpload class.
 		$is_multi = ( 'fileupload' === $field->type && ! empty( $field->multipleFiles ) );
 		$num      = $is_multi ? 2 : 1;
 
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Benign 1x1 transparent PNG data used exclusively for developer dummy file seeding.
 		$png = base64_decode( 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPgPAAEEAQB9ssjfAAAAAElFTkSuQmCC' );
+
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
 
 		for ( $n = 1; $n <= $num; $n++ ) {
 			if ( 1 === $n ) {
@@ -255,8 +271,11 @@ class GravityForms {
 			}
 
 			$path  = trailingslashit( $dir_path ) . $name;
-			$bytes = file_put_contents( $path, $content );
-			if ( false !== $bytes ) {
+			$saved = false;
+			if ( $wp_filesystem ) {
+				$saved = $wp_filesystem->put_contents( $path, $content, FS_CHMOD_FILE );
+			}
+			if ( $saved ) {
 				$urls[] = trailingslashit( $dir_url ) . $name;
 			}
 		}
@@ -273,11 +292,20 @@ class GravityForms {
 		$oldest = GFAPI::get_entries(
 			$form_id,
 			array(),
-			array( 'key' => 'date_created', 'direction' => 'ASC' ),
-			array( 'offset' => 0, 'page_size' => 1 )
+			array(
+				'key'       => 'date_created',
+				'direction' => 'ASC',
+			),
+			array(
+				'offset'    => 0,
+				'page_size' => 1,
+			)
 		);
-		if ( ! empty( $oldest ) && ! is_wp_error( $oldest ) ) {
-			return gmdate( 'Y-m-d', strtotime( $oldest[0]['date_created'] ) );
+		if ( ! empty( $oldest ) && ! is_wp_error( $oldest ) && ! empty( $oldest[0]['date_created'] ) ) {
+			$timestamp = strtotime( $oldest[0]['date_created'] );
+			if ( false !== $timestamp ) {
+				return gmdate( 'Y-m-d', $timestamp );
+			}
 		}
 		return '';
 	}

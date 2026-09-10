@@ -1,4 +1,10 @@
 <?php
+/**
+ * Autoloader class file for Entries & Media Exporter by Naren Jadav.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,21 +32,21 @@ class Loader {
 	 *
 	 * Maps namespace \EMENJ\My_Class to includes/class-my-class.php (lowercase, hyphenated).
 	 *
-	 * @param string $class Class name to load.
+	 * @param string $class_name Class name to load.
 	 * @return void
 	 */
-	public static function autoload( $class ) {
+	public static function autoload( $class_name ) {
 		// Only autoload classes in our namespace.
-		if ( 0 !== strpos( $class, 'EMENJ\\' ) ) {
+		if ( 0 !== strpos( $class_name, 'EMENJ\\' ) ) {
 			return;
 		}
 
 		// Remove the namespace prefix.
-		$relative_class = substr( $class, 6 );
+		$relative_class = substr( $class_name, 6 );
 
 		// Convert class name to WordPress standard filename format.
-		// Class Name: My_Class_Name -> class-my-class-name.php
-		// Namespace: Admin\Settings_Page -> includes/admin/class-settings-page.php
+		// Class Name: My_Class_Name -> class-my-class-name.php.
+		// Namespace: Admin\Settings_Page -> includes/admin/class-settings-page.php.
 		$parts = explode( '\\', $relative_class );
 		$file  = 'class-' . strtolower( str_replace( '_', '-', array_pop( $parts ) ) ) . '.php';
 

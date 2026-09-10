@@ -1,7 +1,7 @@
 (function($) {
 	'use strict';
 
-	$(document).ready(function() {
+	$(function() {
 		const $overlay = $('#emenj-loading-overlay');
 		const $message = $('#emenj-loading-message');
 		const $container = $('#emenj-dashboard-container');
@@ -359,7 +359,8 @@
 			const checkInterval = setInterval(function() {
 				if (getCookie('emenj_download_token') === String(token)) {
 					clearInterval(checkInterval);
-					document.cookie = 'emenj_download_token=; Max-Age=-99999999; path=/;';
+					const cookiePath = (typeof emenj_admin !== 'undefined' && emenj_admin.cookie_path) ? emenj_admin.cookie_path : '/';
+					document.cookie = 'emenj_download_token=; Max-Age=-99999999; path=' + cookiePath + '; SameSite=Lax;';
 					$overlay.hide();
 					Swal.fire({
 						icon: 'success',
@@ -380,6 +381,7 @@
 			if (parts.length === 2) {
 				return parts.pop().split(';').shift();
 			}
+			return '';
 		}
 	});
 })(jQuery);

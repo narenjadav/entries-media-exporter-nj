@@ -1,4 +1,10 @@
 <?php
+/**
+ * Admin screen and AJAX handling class.
+ *
+ * @package EMENJ
+ */
+
 namespace EMENJ;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,7 +74,7 @@ class Admin {
 	 * @return void
 	 */
 	public function enqueue_assets( string $hook ) {
-		if ( strpos( $hook, EME_NJ_SLUG ) === false ) {
+		if ( false === strpos( $hook, EME_NJ_SLUG ) ) {
 			return;
 		}
 
@@ -137,9 +143,10 @@ class Admin {
 			'emenj-admin-js',
 			'emenj_admin',
 			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'emenj_admin_nonce' ),
-				'slug'     => EME_NJ_SLUG
+				'ajax_url'    => admin_url( 'admin-ajax.php' ),
+				'nonce'       => wp_create_nonce( 'emenj_admin_nonce' ),
+				'slug'        => EME_NJ_SLUG,
+				'cookie_path' => COOKIEPATH ? COOKIEPATH : '/',
 			)
 		);
 	}
@@ -151,10 +158,10 @@ class Admin {
 	 * @return array Modified action links.
 	 */
 	public function add_plugin_action_links( array $links ): array {
-		$settings_url = admin_url( 'admin.php?page=' . EME_NJ_SLUG );
+		$settings_url  = admin_url( 'admin.php?page=' . EME_NJ_SLUG );
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url($settings_url),
+			esc_url( $settings_url ),
 			esc_html__( 'Settings', 'entries-media-exporter-nj' )
 		);
 		array_unshift( $links, $settings_link );
@@ -253,15 +260,17 @@ class Admin {
 		$entry_count = $this->gf->count_entries( $form_id );
 		$min_date    = $this->gf->get_oldest_entry_date( $form_id );
 
-		wp_send_json_success( array(
-			'message'     => sprintf(
-				/* translators: %d: number of seeded entries */
-				_n( 'Created %d sample entry with files.', 'Created %d sample entries with files.', $result, 'entries-media-exporter-nj' ),
-				$result
-			),
-			'entry_count' => $entry_count,
-			'min_date'    => $min_date
-		) );
+		wp_send_json_success(
+			array(
+				'message'     => sprintf(
+					/* translators: %d: number of seeded entries */
+					_n( 'Created %d sample entry with files.', 'Created %d sample entries with files.', $result, 'entries-media-exporter-nj' ),
+					$result
+				),
+				'entry_count' => $entry_count,
+				'min_date'    => $min_date,
+			)
+		);
 	}
 
 	/**
@@ -283,8 +292,10 @@ class Admin {
 			wp_send_json_error( array( 'message' => __( 'Please check the confirmation box before deleting entries.', 'entries-media-exporter-nj' ) ) );
 		}
 
-		$date_start = Helpers::sanitize_date( sanitize_text_field( wp_unslash( $_POST['date_start'] ?? '' ) ) );
-		$date_end   = Helpers::sanitize_date( sanitize_text_field( wp_unslash( $_POST['date_end'] ?? '' ) ) );
+		$raw_start  = isset( $_POST['date_start'] ) ? sanitize_text_field( wp_unslash( $_POST['date_start'] ) ) : '';
+		$raw_end    = isset( $_POST['date_end'] ) ? sanitize_text_field( wp_unslash( $_POST['date_end'] ) ) : '';
+		$date_start = Helpers::sanitize_date( $raw_start );
+		$date_end   = Helpers::sanitize_date( $raw_end );
 
 		if ( $date_start && $date_end && $date_start > $date_end ) {
 			wp_send_json_error( array( 'message' => __( 'The start date must be before the end date.', 'entries-media-exporter-nj' ) ) );
@@ -295,10 +306,13 @@ class Admin {
 			wp_send_json_error( array( 'message' => __( 'Exporter not loaded.', 'entries-media-exporter-nj' ) ) );
 		}
 
-		$result = $export->run_remove( $form_id, array(
-			'date_start' => $date_start,
-			'date_end'   => $date_end,
-		) );
+		$result = $export->run_remove(
+			$form_id,
+			array(
+				'date_start' => $date_start,
+				'date_end'   => $date_end,
+			)
+		);
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -322,10 +336,12 @@ class Admin {
 			);
 		}
 
-		wp_send_json_success( array(
-			'message'     => $message,
-			'entry_count' => $entry_count,
-			'min_date'    => $min_date
-		) );
+		wp_send_json_success(
+			array(
+				'message'     => $message,
+				'entry_count' => $entry_count,
+				'min_date'    => $min_date,
+			)
+		);
 	}
 }
